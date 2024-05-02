@@ -6,12 +6,15 @@ import com.michael.book_social_network.payload.response.BorrowedBookResponse;
 import com.michael.book_social_network.payload.response.MessageResponse;
 import com.michael.book_social_network.payload.response.PageResponse;
 import com.michael.book_social_network.service.BookService;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -95,5 +98,15 @@ public class BookController {
     public ResponseEntity<MessageResponse> approveReturnBorrowBook(@PathVariable("book-id") Long bookId,
                                                                    Authentication authentication) {
         return new ResponseEntity<>(bookService.approveReturnBorrowedBook(bookId, authentication), OK);
+    }
+
+    @PostMapping(value = "/cover/{book-id}", consumes = "multipart/form-data")
+    public ResponseEntity<?> uploadBookCoverPicture(@PathVariable("book-id") Long bookId,
+                                                    @Parameter()
+                                                    @RequestPart("file")MultipartFile file,
+                                                    Authentication connectedUser){
+        bookService.uploadBookCoverPicture(bookId, file, connectedUser);
+        return ResponseEntity.accepted().build();
+
     }
 }

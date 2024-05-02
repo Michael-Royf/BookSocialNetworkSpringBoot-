@@ -12,7 +12,9 @@ import com.michael.book_social_network.payload.response.PageResponse;
 import com.michael.book_social_network.repository.BookRepository;
 import com.michael.book_social_network.repository.BookTransactionHistoryRepository;
 import com.michael.book_social_network.service.BookService;
+import com.michael.book_social_network.service.FileStorageService;
 import com.michael.book_social_network.utility.BookSpecification;
+import com.michael.book_social_network.utility.FileUtils;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +39,7 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookTransactionHistoryRepository transactionHistoryRepository;
     private final ModelMapper mapper;
+    private final FileStorageService fileStorageService;
 
 
     @Override
@@ -229,7 +232,17 @@ public class BookServiceImpl implements BookService {
         return new MessageResponse("The book was returned successfully"); //TODO: constants
     }
 
-    //5.28
+    @Override
+    public void uploadBookCoverPicture(Long bookId,
+                                       MultipartFile file,
+                                       Authentication connectedUser) {
+        Book book = findBookInDBById(bookId);
+        User user = (User) connectedUser.getPrincipal();
+
+        var bookCover = fileStorageService.saveFile(file, user.getId());
+        book.setBookCover(bookCover);
+        bookRepository.save(book);
+    }
 
 
     private Book findBookInDBById(Long bookId) {

@@ -6,6 +6,7 @@ import com.michael.book_social_network.payload.response.BorrowedBookResponse;
 import com.michael.book_social_network.payload.response.MessageResponse;
 import com.michael.book_social_network.payload.response.PageResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface BookService {
@@ -31,4 +32,6 @@ public interface BookService {
     MessageResponse returnBorrowedBook(Long bookId, Authentication authentication);
 
     MessageResponse approveReturnBorrowedBook(Long bookId, Authentication authentication);
+
+    void uploadBookCoverPicture(Long bookId, MultipartFile file, Authentication connectedUser);
 }
