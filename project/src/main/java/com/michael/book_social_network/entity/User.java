@@ -109,7 +109,7 @@ public class User implements UserDetails, Principal {
         return email;
     }
 
-    public String createFullName() {
+    public String getFullName() {
         return firstName + " " + lastName;
     }
 }

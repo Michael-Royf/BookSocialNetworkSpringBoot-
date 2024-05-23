@@ -11,11 +11,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificationExecutor<Book> {
 
-    @Query("select book from Book book where book.archived = false and book.shareable = true  and book.owner.id != :userId")
+    @Query("""
+            SELECT book
+            FROM Book book
+            WHERE book.archived = false
+            AND book.shareable = true
+            AND book.owner.id != :userId
+            """)
     Page<Book> findAllDisplayableBooks(Pageable pageable, Long userId);
 
 
-    //    4.53
+    //   8.49
 
 
 }

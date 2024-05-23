@@ -14,11 +14,10 @@ import com.michael.book_social_network.repository.BookTransactionHistoryReposito
 import com.michael.book_social_network.service.BookService;
 import com.michael.book_social_network.service.FileStorageService;
 import com.michael.book_social_network.utility.BookSpecification;
-import com.michael.book_social_network.utility.FileUtils;
+import com.michael.book_social_network.utility.mapper.BookMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,8 +37,9 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final BookTransactionHistoryRepository transactionHistoryRepository;
-    private final ModelMapper mapper;
+    //    private final ModelMapper mapper;
     private final FileStorageService fileStorageService;
+    private final BookMapper bookMapper;
 
 
     @Override
@@ -49,7 +49,7 @@ public class BookServiceImpl implements BookService {
                 .title(bookRequest.getTitle())
                 .authorName(bookRequest.getAuthorName())
                 .isbn(bookRequest.getIsbn())
-                .synopsys(bookRequest.getSynopsis())
+                .synopsis(bookRequest.getSynopsis())
                 .shareable(true)
                 .owner(user)
                 .build();
@@ -61,7 +61,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookResponse getBookById(Long bookId) {
         Book book = findBookInDBById(bookId);
-        return mapper.map(book, BookResponse.class);
+        return bookMapper.toBookResponse(book);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class BookServiceImpl implements BookService {
         Page<Book> books = bookRepository.findAllDisplayableBooks(pageable, user.getId());
         List<BookResponse> bookResponseList = books
                 .stream()
-                .map(book -> mapper.map(book, BookResponse.class))
+                .map(bookMapper::toBookResponse)
                 .toList();
         return new PageResponse<>(
                 bookResponseList,
@@ -92,8 +92,9 @@ public class BookServiceImpl implements BookService {
 
         List<BookResponse> bookResponseList = books
                 .stream()
-                .map(book -> mapper.map(book, BookResponse.class))
+                .map(bookMapper::toBookResponse)
                 .toList();
+
         return new PageResponse<>(
                 bookResponseList,
                 books.getNumber(),
@@ -110,10 +111,11 @@ public class BookServiceImpl implements BookService {
         User user = (User) connectUser.getPrincipal();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<BookTransactionHistory> allBorrowedBooks = transactionHistoryRepository.findAllBorrowedBooks(pageable, user.getId());
+
         List<BorrowedBookResponse> books = allBorrowedBooks
                 .stream()
-                .map(book -> mapper.map(book, BorrowedBookResponse.class))
-                .collect(Collectors.toList());
+                .map(bookMapper::toBorrowedBookResponse)
+                .toList();
 
         return new PageResponse<>(
                 books,
@@ -131,10 +133,12 @@ public class BookServiceImpl implements BookService {
     public PageResponse<BorrowedBookResponse> findAllReturnedBooks(int page, int size, Authentication connectUser) {
         User user = (User) connectUser.getPrincipal();
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<BookTransactionHistory> allBorrowedBooks = transactionHistoryRepository.findAllReturnedBooks(pageable, user.getId());
+        Page<BookTransactionHistory> allBorrowedBooks = transactionHistoryRepository
+                .findAllReturnedBooks(pageable, user.getId());
+
         List<BorrowedBookResponse> books = allBorrowedBooks
                 .stream()
-                .map(book -> mapper.map(book, BorrowedBookResponse.class))
+                .map(bookMapper::toBorrowedBookResponse)
                 .collect(Collectors.toList());
 
         return new PageResponse<>(
@@ -208,9 +212,9 @@ public class BookServiceImpl implements BookService {
         }
         BookTransactionHistory bookTransactionHistory =
                 transactionHistoryRepository.findByBookIdAndUserId(bookId, user.getId())
-                        .orElseThrow(()-> new OperationNotPermittedException("You did not borrow this book"));
-            bookTransactionHistory.setReturned(true);
-            transactionHistoryRepository.save(bookTransactionHistory);
+                        .orElseThrow(() -> new OperationNotPermittedException("You did not borrow this book"));
+        bookTransactionHistory.setReturned(true);
+        transactionHistoryRepository.save(bookTransactionHistory);
         return new MessageResponse("The book was returned successfully");
     }
 
@@ -226,7 +230,7 @@ public class BookServiceImpl implements BookService {
         }
         BookTransactionHistory bookTransactionHistory =
                 transactionHistoryRepository.findByBookIdAndOwnerId(bookId, user.getId())
-                        .orElseThrow(()-> new OperationNotPermittedException("The book is not returned yet. You cannot approve its return"));
+                        .orElseThrow(() -> new OperationNotPermittedException("The book is not returned yet. You cannot approve its return"));
         bookTransactionHistory.setReturnApproved(true);
         transactionHistoryRepository.save(bookTransactionHistory);
         return new MessageResponse("The book was returned successfully"); //TODO: constants
@@ -260,4 +264,4 @@ public class BookServiceImpl implements BookService {
 
 }
 
-
+//9.10.03

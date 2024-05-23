@@ -1,5 +1,6 @@
 package com.michael.book_social_network.payload.response;
 
+import com.michael.book_social_network.entity.User;
 import lombok.*;
 
 @AllArgsConstructor

@@ -29,7 +29,7 @@ public class Book extends BaseEntity {
 
     private String isbn;
 
-    private String synopsys;//краткий обзор
+    private String synopsis;//краткий обзор
 
     private String bookCover;
 

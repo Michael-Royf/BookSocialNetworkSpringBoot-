@@ -1,0 +1,22 @@
+1.  bootstrap -https://getbootstrap.com/ в папку с фронотом
+2. https://docs.fontawesome.com/ -->  npm install @fortawesome/fontawesome-free
+
+3. ng-openapi-gen --->  npm i ng-openapi-gen
+ in package.json ->      "api-gen" : "ng-open-api-gen --input ./src/openapi/openapi.json --output ./src/app/services",
+
+
+ ng g c login  создание компонента с названием login/  в папке  pages
+
+provideHttpClient(withFetch())]  в файл app.config
+
+angular-code-input -->  npm i angular-code-input
+
+ в папке модуль. создаем --->   ng g m book --routing
+
+
+int package interceptor -->  ng g interceptor http-token
+https://medium.com/@mohsinogen/angular-17-http-interceptors-guide-417e7c8ffada
+
+
+
+

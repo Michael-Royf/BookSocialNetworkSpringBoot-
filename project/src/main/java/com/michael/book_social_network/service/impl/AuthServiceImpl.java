@@ -1,7 +1,7 @@
 package com.michael.book_social_network.service.impl;
 
-import com.michael.book_social_network.entity.VerificationToken;
 import com.michael.book_social_network.entity.User;
+import com.michael.book_social_network.entity.VerificationToken;
 import com.michael.book_social_network.enumeration.EmailTemplateName;
 import com.michael.book_social_network.exceptions.payload.UserNotFoundException;
 import com.michael.book_social_network.exceptions.payload.UserRoleNotFoundException;
@@ -10,6 +10,7 @@ import com.michael.book_social_network.payload.request.RegistrationRequest;
 import com.michael.book_social_network.payload.response.AuthenticationResponse;
 import com.michael.book_social_network.repository.RoleRepository;
 import com.michael.book_social_network.repository.UserRepository;
+import com.michael.book_social_network.security.JwtService;
 import com.michael.book_social_network.service.AuthService;
 import com.michael.book_social_network.service.EmailService;
 import com.michael.book_social_network.service.VerificationTokenService;
@@ -23,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -35,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final VerificationTokenService verificationTokenService;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
@@ -68,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
         var newToken = verificationTokenService.generateAndSaveVerificationToken(user);
         emailService.sendEmail(
                 user.getEmail(),
-                user.createFullName(),
+                user.getFullName(),
                 EmailTemplateName.ACTIVATE_ACCOUNT,
                 activationUrl,
                 newToken,
@@ -84,15 +87,21 @@ public class AuthServiceImpl implements AuthService {
                         request.getPassword()
                 )
         );
-        return null;
-    }
+        var claims = new HashMap<String, Object>();
+        var user = ((User) auth.getPrincipal());
+        claims.put("fullName", user.getFullName());
 
+        var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        return AuthenticationResponse.builder()
+                .JWT_token(jwtToken)
+                .build();
+    }
 
 
     //@Transactional
     @Override
     public void activateAccount(String token) throws MessagingException {
-       VerificationToken savedToken = verificationTokenService.findByToken(token);
+        VerificationToken savedToken = verificationTokenService.findByToken(token);
         if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
             sendValidationEmail(savedToken.getUser());
             throw new RuntimeException("Activation token has expired. A new token has been sent to the same email address");
