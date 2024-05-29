@@ -3,7 +3,6 @@ package com.michael.book_social_network.controllers;
 import com.michael.book_social_network.payload.request.BookRequest;
 import com.michael.book_social_network.payload.response.BookResponse;
 import com.michael.book_social_network.payload.response.BorrowedBookResponse;
-import com.michael.book_social_network.payload.response.MessageResponse;
 import com.michael.book_social_network.payload.response.PageResponse;
 import com.michael.book_social_network.service.BookService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +18,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/v1/api/v1/books")
+@RequestMapping("/api/v1/api/v1/api/v1/books")
 @RequiredArgsConstructor
 @Tag(name = "Book")
 public class BookController {
@@ -27,7 +26,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<MessageResponse> createBook(@RequestBody @Valid BookRequest book,
+    public ResponseEntity<Long> createBook(@RequestBody @Valid BookRequest book,
                                                       Authentication connectedUser) {
         return new ResponseEntity<>(bookService.createBook(book, connectedUser), CREATED);
     }
@@ -70,31 +69,31 @@ public class BookController {
 
 
     @PatchMapping("/shareable/{book-id}")
-    public ResponseEntity<MessageResponse> updateShareableStatus(@PathVariable("book-id") Long bookId,
+    public ResponseEntity<Long> updateShareableStatus(@PathVariable("book-id") Long bookId,
                                                                  Authentication authentication) {
         return new ResponseEntity<>(bookService.updateShareableStatus(bookId, authentication), OK);
     }
 
     @PatchMapping("/archived/{book-id}")
-    public ResponseEntity<MessageResponse> updateArchivedStatus(@PathVariable("book-id") Long bookId,
+    public ResponseEntity<Long> updateArchivedStatus(@PathVariable("book-id") Long bookId,
                                                                 Authentication authentication) {
         return new ResponseEntity<>(bookService.updateArchivedStatus(bookId, authentication), OK);
     }
 
     @PostMapping("/borrow/{book-id}")
-    public ResponseEntity<MessageResponse> borrowBook(@PathVariable("book-id") Long bookId,
+    public ResponseEntity<Long> borrowBook(@PathVariable("book-id") Long bookId,
                                                       Authentication authentication) {
         return new ResponseEntity<>(bookService.borrowBook(bookId, authentication), OK);
     }
 
     @PatchMapping("/borrow/return/{book-id}")
-    public ResponseEntity<MessageResponse> returnBook(@PathVariable("book-id") Long bookId,
+    public ResponseEntity<Long> returnBook(@PathVariable("book-id") Long bookId,
                                                       Authentication authentication) {
         return new ResponseEntity<>(bookService.returnBorrowedBook(bookId, authentication), OK);
     }
 
     @PatchMapping("/borrow/return//approve/{book-id}")
-    public ResponseEntity<MessageResponse> approveReturnBorrowBook(@PathVariable("book-id") Long bookId,
+    public ResponseEntity<Long> approveReturnBorrowBook(@PathVariable("book-id") Long bookId,
                                                                    Authentication authentication) {
         return new ResponseEntity<>(bookService.approveReturnBorrowedBook(bookId, authentication), OK);
     }
@@ -109,3 +108,5 @@ public class BookController {
 
     }
 }
+
+//11.04

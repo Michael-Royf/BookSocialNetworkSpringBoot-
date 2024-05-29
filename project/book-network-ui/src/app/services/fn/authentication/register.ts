@@ -30,4 +30,4 @@ export function register(http: HttpClient, rootUrl: string, params: Register$Par
   );
 }
 
-register.PATH = '/api/v1/auth/register';
+register.PATH = '/api/v1/api/v1/auth/register';

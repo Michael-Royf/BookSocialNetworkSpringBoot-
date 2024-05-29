@@ -7,7 +7,6 @@ import com.michael.book_social_network.exceptions.payload.OperationNotPermittedE
 import com.michael.book_social_network.payload.request.BookRequest;
 import com.michael.book_social_network.payload.response.BookResponse;
 import com.michael.book_social_network.payload.response.BorrowedBookResponse;
-import com.michael.book_social_network.payload.response.MessageResponse;
 import com.michael.book_social_network.payload.response.PageResponse;
 import com.michael.book_social_network.repository.BookRepository;
 import com.michael.book_social_network.repository.BookTransactionHistoryRepository;
@@ -37,13 +36,12 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final BookTransactionHistoryRepository transactionHistoryRepository;
-    //    private final ModelMapper mapper;
     private final FileStorageService fileStorageService;
     private final BookMapper bookMapper;
 
 
     @Override
-    public MessageResponse createBook(BookRequest bookRequest, Authentication connectedUser) {
+    public Long createBook(BookRequest bookRequest, Authentication connectedUser) {
         User user = (User) connectedUser.getPrincipal();
         Book book = Book.builder()
                 .title(bookRequest.getTitle())
@@ -54,8 +52,8 @@ public class BookServiceImpl implements BookService {
                 .owner(user)
                 .build();
 
-        bookRepository.save(book);
-        return new MessageResponse("The book was successfully created");
+        return bookRepository.save(book).getId();
+
     }
 
     @Override
@@ -153,31 +151,30 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public MessageResponse updateShareableStatus(Long bookId, Authentication authentication) {
+    public Long updateShareableStatus(Long bookId, Authentication authentication) {
         Book book = findBookInDBById(bookId);
         User user = (User) authentication.getPrincipal();
         if (!Objects.equals(book.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot update books shareable status");
         }
         book.setShareable(!book.isShareable());
-        bookRepository.save(book);
-        return new MessageResponse("Books shareable status was updated");
+        return bookRepository.save(book).getId();
+
     }
 
     @Override
-    public MessageResponse updateArchivedStatus(Long bookId, Authentication authentication) {
+    public Long updateArchivedStatus(Long bookId, Authentication authentication) {
         Book book = findBookInDBById(bookId);
         User user = (User) authentication.getPrincipal();
         if (!Objects.equals(book.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot update other books archived status");
         }
         book.setArchived(!book.isArchived());
-        bookRepository.save(book);
-        return new MessageResponse("Books archived status was updated");
+        return bookRepository.save(book).getId();
     }
 
     @Override
-    public MessageResponse borrowBook(Long bookId, Authentication authentication) {
+    public Long borrowBook(Long bookId, Authentication authentication) {
         Book book = findBookInDBById(bookId);
         User user = (User) authentication.getPrincipal();
         if (book.isArchived() || !book.isShareable()) {
@@ -196,12 +193,11 @@ public class BookServiceImpl implements BookService {
                 .returned(false)
                 .returnApproved(false)
                 .build();
-        transactionHistoryRepository.save(bookTransactionHistory);
-        return new MessageResponse("Book was borrowed");
+        return transactionHistoryRepository.save(bookTransactionHistory).getId();
     }
 
     @Override
-    public MessageResponse returnBorrowedBook(Long bookId, Authentication authentication) {
+    public Long returnBorrowedBook(Long bookId, Authentication authentication) {
         Book book = findBookInDBById(bookId);
         User user = (User) authentication.getPrincipal();
         if (book.isArchived() || !book.isShareable()) {
@@ -214,12 +210,12 @@ public class BookServiceImpl implements BookService {
                 transactionHistoryRepository.findByBookIdAndUserId(bookId, user.getId())
                         .orElseThrow(() -> new OperationNotPermittedException("You did not borrow this book"));
         bookTransactionHistory.setReturned(true);
-        transactionHistoryRepository.save(bookTransactionHistory);
-        return new MessageResponse("The book was returned successfully");
+        return transactionHistoryRepository.save(bookTransactionHistory).getId();
+
     }
 
     @Override
-    public MessageResponse approveReturnBorrowedBook(Long bookId, Authentication authentication) {
+    public Long approveReturnBorrowedBook(Long bookId, Authentication authentication) {
         Book book = findBookInDBById(bookId);
         User user = (User) authentication.getPrincipal();
         if (book.isArchived() || !book.isShareable()) {
@@ -232,8 +228,7 @@ public class BookServiceImpl implements BookService {
                 transactionHistoryRepository.findByBookIdAndOwnerId(bookId, user.getId())
                         .orElseThrow(() -> new OperationNotPermittedException("The book is not returned yet. You cannot approve its return"));
         bookTransactionHistory.setReturnApproved(true);
-        transactionHistoryRepository.save(bookTransactionHistory);
-        return new MessageResponse("The book was returned successfully"); //TODO: constants
+        return transactionHistoryRepository.save(bookTransactionHistory).getId();
     }
 
     @Override
@@ -264,4 +259,5 @@ public class BookServiceImpl implements BookService {
 
 }
 
-//9.10.03
+
+//10.52

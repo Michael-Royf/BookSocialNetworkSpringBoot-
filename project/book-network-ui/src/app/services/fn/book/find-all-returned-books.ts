@@ -30,4 +30,4 @@ export function findAllReturnedBooks(http: HttpClient, rootUrl: string, params?:
   );
 }
 
-findAllReturnedBooks.PATH = '/api/v1/books/returned';
+findAllReturnedBooks.PATH = '/api/v1/api/v1/books/returned';

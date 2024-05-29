@@ -1,19 +1,17 @@
 /* tslint:disable */
 /* eslint-disable */
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
+import {AuthenticationService, BookService, FeedBackService} from "./services";
 
-import { FeedBackService } from './services/feed-back.service';
-import { BookService } from './services/book.service';
-import { AuthenticationService } from './services/authentication.service';
 
 
 /**
  * Module that provides all services and configuration.
  */
 @NgModule({
-  imports: [HttpClientModule],
+  imports: [],
   exports: [],
   declarations: [],
   providers: [
@@ -21,7 +19,6 @@ import { AuthenticationService } from './services/authentication.service';
     BookService,
     AuthenticationService,
     ApiConfiguration
-
   ],
 })
 export class ApiModule {

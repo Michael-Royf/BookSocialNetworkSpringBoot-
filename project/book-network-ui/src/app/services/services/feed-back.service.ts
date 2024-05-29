@@ -22,7 +22,7 @@ export class FeedBackService extends BaseService {
   }
 
   /** Path part for operation `saveFeedback()` */
-  static readonly SaveFeedbackPath = '/api/v1/feedbacks';
+  static readonly SaveFeedbackPath = '/api/v1/api/v1/feedbacks';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -47,7 +47,7 @@ export class FeedBackService extends BaseService {
   }
 
   /** Path part for operation `findAllFeedbacksByBook()` */
-  static readonly FindAllFeedbacksByBookPath = '/api/v1/feedbacks/book/{book-id}';
+  static readonly FindAllFeedbacksByBookPath = '/api/v1/api/v1/feedbacks/book/{book-id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

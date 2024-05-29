@@ -30,4 +30,4 @@ export function findAllByOwner(http: HttpClient, rootUrl: string, params?: FindA
   );
 }
 
-findAllByOwner.PATH = '/api/v1/books/owner';
+findAllByOwner.PATH = '/api/v1/api/v1/books/owner';

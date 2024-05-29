@@ -29,4 +29,4 @@ export function authenticate(http: HttpClient, rootUrl: string, params: Authenti
   );
 }
 
-authenticate.PATH = '/api/v1/auth/authenticate';
+authenticate.PATH = '/api/v1/api/v1/auth/authenticate';

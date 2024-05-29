@@ -12,7 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/api/v1/feedbacks")
+@RequestMapping("/api/1/api/v1/api/v1/feedbacks")
 @RequiredArgsConstructor
 @Tag(name = "FeedBack")
 public class FeedBackController {

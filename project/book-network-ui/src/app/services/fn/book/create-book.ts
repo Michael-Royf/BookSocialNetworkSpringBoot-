@@ -7,13 +7,12 @@ import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
 import { BookRequest } from '../../models/book-request';
-import { MessageResponse } from '../../models/message-response';
 
 export interface CreateBook$Params {
       body: BookRequest
 }
 
-export function createBook(http: HttpClient, rootUrl: string, params: CreateBook$Params, context?: HttpContext): Observable<StrictHttpResponse<MessageResponse>> {
+export function createBook(http: HttpClient, rootUrl: string, params: CreateBook$Params, context?: HttpContext): Observable<StrictHttpResponse<number>> {
   const rb = new RequestBuilder(rootUrl, createBook.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
@@ -24,9 +23,9 @@ export function createBook(http: HttpClient, rootUrl: string, params: CreateBook
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<MessageResponse>;
+      return (r as HttpResponse<any>).clone({ body: parseFloat(String((r as HttpResponse<any>).body)) }) as StrictHttpResponse<number>;
     })
   );
 }
 
-createBook.PATH = '/api/v1/books';
+createBook.PATH = '/api/v1/api/v1/books';
