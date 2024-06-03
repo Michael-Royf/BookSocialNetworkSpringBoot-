@@ -30,10 +30,13 @@ public class User implements UserDetails, Principal {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
 
-//    private String username;
+    @Column(unique = true, nullable = false)
+    private String username;
 
+    @Column(nullable = false)
     private String firstName;
 
+    @Column(nullable = false)
     private String lastName;
 
     @Column(unique = true, nullable = false)
@@ -41,6 +44,7 @@ public class User implements UserDetails, Principal {
 
     private LocalDate dateOfBirth;
 
+    @Column(nullable = false)
     private String password;
 
     private boolean accountLocked;
@@ -80,7 +84,7 @@ public class User implements UserDetails, Principal {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
 

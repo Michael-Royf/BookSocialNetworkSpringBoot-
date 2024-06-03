@@ -7,9 +7,9 @@
     <p *ngFor="let msg of errorMsg">{{ msg }}</p>
   </div>
   <div class="mb-3">
-    <label for="login" class="form-label">Email address</label>
-    <input [(ngModel)]="authRequest.email" type="email" class="form-control" id="login"
-           placeholder="Enter Email address">
+    <label for="login" class="form-label">Email or username address</label>
+    <input [(ngModel)]="authRequest.usernameOrEmail" type="text" class="form-control" id="login"
+           placeholder="Enter Email address or Username">
   </div>
   <div class="mb-3">
     <label for="password" class="form-label">Password</label>

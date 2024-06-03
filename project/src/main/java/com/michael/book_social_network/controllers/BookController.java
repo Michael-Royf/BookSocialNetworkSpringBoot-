@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/v1/api/v1/api/v1/books")
+@RequestMapping("/api/v1/api/v1/books")
 @RequiredArgsConstructor
 @Tag(name = "Book")
 public class BookController {

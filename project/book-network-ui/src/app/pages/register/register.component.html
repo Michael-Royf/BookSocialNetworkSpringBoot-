@@ -3,18 +3,25 @@
   <hr/>
 
   <div class="alert alert-danger" role="alert" *ngIf="errorMsg.length">
-
     <p *ngFor="let msg of errorMsg">{{ msg }}</p>
   </div>
+
+
   <div class="mb-3">
-    <label for="firstname" class="form-label">Firstname</label>
+    <label for="username" class="form-label">Username</label>
+    <input [(ngModel)]="registerRequest.username" type="text" class="form-control" id="username"
+           placeholder="Enter username">
+  </div>
+
+  <div class="mb-3">
+    <label for="firstname" class="form-label">First name</label>
     <input [(ngModel)]="registerRequest.firstName" type="text" class="form-control" id="firstname"
-           placeholder="Enter firstname">
+           placeholder="Enter first name">
   </div>
   <div class="mb-3">
-    <label for="lastName" class="form-label">Lastname</label>
+    <label for="lastName" class="form-label">Last name</label>
     <input [(ngModel)]="registerRequest.lastName" type="text" class="form-control" id="lastName"
-           placeholder="Enter lastname">
+           placeholder="Enter last name">
   </div>
 
   <div class="mb-3">
@@ -27,6 +34,12 @@
     <label for="password" class="form-label">Password</label>
     <input [(ngModel)]="registerRequest.password" type="text" class="form-control" id="password"
            placeholder="Enter password">
+  </div>
+
+  <div class="mb-3">
+    <label for="confirmationPassword" class="form-label">Confirmation Password</label>
+    <input [(ngModel)]="registerRequest.confirmationPassword" type="text" class="form-control" id="confirmationPassword"
+           placeholder="Enter confirmation Password">
   </div>
 
 

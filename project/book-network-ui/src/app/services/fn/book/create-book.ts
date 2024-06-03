@@ -28,4 +28,4 @@ export function createBook(http: HttpClient, rootUrl: string, params: CreateBook
   );
 }
 
-createBook.PATH = '/api/v1/api/v1/books';
+createBook.PATH = '/api/v1/books';

@@ -28,4 +28,4 @@ export function saveFeedback(http: HttpClient, rootUrl: string, params: SaveFeed
   );
 }
 
-saveFeedback.PATH = '/api/v1/api/v1/feedbacks';
+saveFeedback.PATH = '/api/v1/feedbacks';

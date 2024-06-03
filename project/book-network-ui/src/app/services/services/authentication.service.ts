@@ -24,7 +24,7 @@ export class AuthenticationService extends BaseService {
   }
 
   /** Path part for operation `register()` */
-  static readonly RegisterPath = '/api/v1/api/v1/auth/register';
+  static readonly RegisterPath = '/api/v1/auth/register';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -53,7 +53,7 @@ export class AuthenticationService extends BaseService {
   }
 
   /** Path part for operation `authenticate()` */
-  static readonly AuthenticatePath = '/api/v1/api/v1/auth/authenticate';
+  static readonly AuthenticatePath = '/api/v1/auth/authenticate';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -78,7 +78,7 @@ export class AuthenticationService extends BaseService {
   }
 
   /** Path part for operation `confirm()` */
-  static readonly ConfirmPath = '/api/v1/api/v1/auth/activate-account';
+  static readonly ConfirmPath = '/api/v1/auth/activate-account';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

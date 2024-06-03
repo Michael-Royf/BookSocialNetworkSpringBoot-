@@ -27,4 +27,4 @@ export function confirm(http: HttpClient, rootUrl: string, params: Confirm$Param
   );
 }
 
-confirm.PATH = '/api/v1/api/v1/auth/activate-account';
+confirm.PATH = '/api/v1/auth/activate-account';

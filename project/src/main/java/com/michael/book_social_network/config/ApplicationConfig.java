@@ -10,7 +10,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -28,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static com.google.common.net.HttpHeaders.*;
+import static com.michael.book_social_network.constant.UserConstant.NO_USER_FOUND_BY_EMAIL_OR_USERNAME;
 
 @Configuration
 @RequiredArgsConstructor
@@ -36,9 +36,9 @@ public class ApplicationConfig {
     private final UserRepository userRepository;
 
     @Bean
-    CommandLineRunner runner(RoleRepository roleRepository){
-        return args->{
-            if (roleRepository.findByName("USER").isEmpty()){
+    CommandLineRunner runner(RoleRepository roleRepository) {
+        return args -> {
+            if (roleRepository.findByName("USER").isEmpty()) {
                 roleRepository.save(
                         Role.builder()
                                 .name("USER")
@@ -63,13 +63,12 @@ public class ApplicationConfig {
     @Bean
     @Transactional
     public UserDetailsService userDetailsService() {
-        return email -> {
-            User user = userRepository.findUserByEmail(email)
-                    .orElseThrow(() -> new UsernameNotFoundException(String.format("User with email %s not found", email)));
-            return user;
+        return usernameOrEmail -> {
+            User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                    .orElseThrow(() -> new UsernameNotFoundException(String.format(NO_USER_FOUND_BY_EMAIL_OR_USERNAME, usernameOrEmail)));
+            return userRepository.save(user);
         };
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -85,13 +84,13 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public AuditorAware<Long> auditorAware(){
+    public AuditorAware<Long> auditorAware() {
         return new ApplicationAuditAware();
     }
 
 
     @Bean
-    public CorsFilter corsFilter(){
+    public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);

@@ -1,9 +1,8 @@
 package com.michael.book_social_network.exceptions.payload;
 
-public class UserAlreadyExistsException extends RuntimeException {
+public class EmailExistException  extends RuntimeException{
     private static final long serialVersionUID = 1L;
-
-    public UserAlreadyExistsException(String message) {
+    public EmailExistException(String message) {
         super(message);
     }
 }

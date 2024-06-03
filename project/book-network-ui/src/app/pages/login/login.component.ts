@@ -18,7 +18,7 @@ import {TokenService} from "../../services/token/token.service";
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  authRequest: AuthenticationRequest = {email: '', password: ''};
+  authRequest: AuthenticationRequest = {usernameOrEmail: '', password: ''};
   errorMsg: Array<String> = [];
 
   constructor(

@@ -3,8 +3,10 @@ package com.michael.book_social_network.service.impl;
 import com.michael.book_social_network.entity.User;
 import com.michael.book_social_network.entity.VerificationToken;
 import com.michael.book_social_network.enumeration.EmailTemplateName;
+import com.michael.book_social_network.exceptions.payload.EmailExistException;
 import com.michael.book_social_network.exceptions.payload.UserNotFoundException;
 import com.michael.book_social_network.exceptions.payload.UserRoleNotFoundException;
+import com.michael.book_social_network.exceptions.payload.UsernameExistException;
 import com.michael.book_social_network.payload.request.AuthenticationRequest;
 import com.michael.book_social_network.payload.request.RegistrationRequest;
 import com.michael.book_social_network.payload.response.AuthenticationResponse;
@@ -15,17 +17,21 @@ import com.michael.book_social_network.service.AuthService;
 import com.michael.book_social_network.service.EmailService;
 import com.michael.book_social_network.service.VerificationTokenService;
 import jakarta.mail.MessagingException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+
+import static com.michael.book_social_network.constant.UserConstant.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,17 +50,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void register(RegistrationRequest request) throws MessagingException {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new EntityNotFoundException(String.format("User with email: %s already exists", request.getEmail()));
-        }
+        validateNewUsernameAndEmail(
+                StringUtils.EMPTY,
+                request.getUsername().trim(),
+                request.getEmail().trim().toLowerCase());
 
         String roleName = "USER";
         var userRole = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new UserRoleNotFoundException(String.format("Role with name: %s not found", roleName)));
 
         User user = User.builder()
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .username(request.getUsername())
+                .firstName(firstLetterUpper(request.getFirstName()))
+                .lastName(firstLetterUpper(request.getLastName()))
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .accountLocked(false)
@@ -81,17 +89,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        var auth = authenticationManager.authenticate(
+        Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getUsernameOrEmail(),
                         request.getPassword()
                 )
         );
+        User user = ((User) auth.getPrincipal());
+
         var claims = new HashMap<String, Object>();
-        var user = ((User) auth.getPrincipal());
+
         claims.put("fullName", user.getFullName());
 
-        var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .JWT_token(jwtToken)
                 .build();
@@ -114,4 +124,47 @@ public class AuthServiceImpl implements AuthService {
         savedToken.setValidatedAt(LocalDateTime.now());
         verificationTokenService.saveToken(savedToken);
     }
+
+    private void validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
+        User userByNewUsername = findOptionalUserByUsername(newUsername).orElse(null);
+        User userByNewEmail = userRepository.findUserByEmail(newEmail).orElse(null);
+        if (StringUtils.isNotBlank(currentUsername)) {
+            User currentUser = findOptionalUserByUsername(currentUsername).orElse(null);
+            if (currentUser == null) {
+                throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+            }
+            if (userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
+                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+            }
+            if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
+                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+            }
+        } else {
+            if (userByNewUsername != null) {
+                throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+            }
+            if (userByNewEmail != null) {
+                throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+            }
+        }
+    }
+
+    private Optional<User> findOptionalUserByUsername(String username) {
+        return userRepository.findUserByUsername(username);
+    }
+
+
+    private String firstLetterUpper(String world) {
+        String[] words = world.split(" ");
+        StringBuilder result = new StringBuilder();
+        for (String word : words) {
+            if (word.length() > 0) {
+                char firstChar = Character.toUpperCase(word.charAt(0));
+                String capitalizedWord = firstChar + word.substring(1).toLowerCase();
+                result.append(capitalizedWord).append(" ");
+            }
+        }
+        return result.toString().trim();
+    }
+
 }

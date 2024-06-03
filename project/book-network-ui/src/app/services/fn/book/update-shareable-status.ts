@@ -27,4 +27,4 @@ export function updateShareableStatus(http: HttpClient, rootUrl: string, params:
   );
 }
 
-updateShareableStatus.PATH = '/api/v1/api/v1/books/shareable/{book-id}';
+updateShareableStatus.PATH = '/api/v1/books/shareable/{book-id}';

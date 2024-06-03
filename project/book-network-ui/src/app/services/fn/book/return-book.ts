@@ -27,4 +27,4 @@ export function returnBook(http: HttpClient, rootUrl: string, params: ReturnBook
   );
 }
 
-returnBook.PATH = '/api/v1/api/v1/books/borrow/return/{book-id}';
+returnBook.PATH = '/api/v1/books/borrow/return/{book-id}';

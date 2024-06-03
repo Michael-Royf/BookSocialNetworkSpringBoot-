@@ -1,7 +1,9 @@
 package com.michael.book_social_network.exceptions;
 
 
+import com.michael.book_social_network.exceptions.payload.EmailExistException;
 import com.michael.book_social_network.exceptions.payload.OperationNotPermittedException;
+import com.michael.book_social_network.exceptions.payload.UsernameExistException;
 import com.michael.book_social_network.payload.response.ExceptionResponse;
 import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +58,30 @@ public class GlobalExceptionHandler {
                         .build()
                 );
     }
+    @ExceptionHandler(UsernameExistException.class)
+    public ResponseEntity<ExceptionResponse> handleException(UsernameExistException exception) {
+        return ResponseEntity.status(CONFLICT)
+                .body(ExceptionResponse.builder()
+                        .businessErrorCode(409)
+                        .businessErrorDescription("Username already exists")
+                        .error(exception.getMessage())
+                        .build()
+                );
+    }
+
+
+
+    @ExceptionHandler(EmailExistException.class)
+    public ResponseEntity<ExceptionResponse> handleException(EmailExistException exception) {
+        return ResponseEntity.status(CONFLICT)
+                .body(ExceptionResponse.builder()
+                        .businessErrorCode(409)
+                        .businessErrorDescription("Email already exists")
+                        .error(exception.getMessage())
+                        .build()
+                );
+    }
+
 
 
     @ExceptionHandler(DisabledException.class)

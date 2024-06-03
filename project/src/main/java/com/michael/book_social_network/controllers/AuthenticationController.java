@@ -1,5 +1,6 @@
 package com.michael.book_social_network.controllers;
 
+import com.michael.book_social_network.exceptions.GlobalExceptionHandler;
 import com.michael.book_social_network.payload.request.AuthenticationRequest;
 import com.michael.book_social_network.payload.request.RegistrationRequest;
 import com.michael.book_social_network.payload.response.AuthenticationResponse;
@@ -13,10 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/api/v1/api/v1/auth")
+@RequestMapping("/api/v1/api/v1/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication")
-public class AuthenticationController {
+public class AuthenticationController extends GlobalExceptionHandler {
 
     private final AuthService authenticationService;
 

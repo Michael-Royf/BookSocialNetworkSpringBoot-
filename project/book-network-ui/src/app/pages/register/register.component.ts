@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
-import {RegistrationRequest} from "../../services/models/registration-request";
+import {Component} from '@angular/core';
+
 import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../../services/services/authentication.service";
+import {RegistrationRequest} from "../../services/models/registration-request";
 
 @Component({
   selector: 'app-register',
@@ -18,12 +19,19 @@ import {AuthenticationService} from "../../services/services/authentication.serv
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
-  registerRequest: RegistrationRequest={firstName: '', lastName:'', email: '', password: ''}
-  errorMsg: Array<String> =[];
+  registerRequest: RegistrationRequest = {
+    username: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmationPassword: ''
+  }
+  errorMsg: Array<String> = [];
 
   constructor(
     private router: Router,
-    private authService:AuthenticationService
+    private authService: AuthenticationService
   ) {
   }
 
@@ -32,19 +40,26 @@ export class RegisterComponent {
     this.errorMsg = [];
     this.authService.register({
       body: this.registerRequest
-    }).subscribe({
-      next:()=>{
-        this.router.navigate(['activate-account'])
-      },
-      error:(err)=>{
-        this.errorMsg = err.error.validationErrors; //7.41
-      }
     })
+      .subscribe({
+        next: () => {
+          this.router.navigate(['activate-account']);
+        },
+        error: (err) => {
+          console.error(err); // Логирование ошибки для отладки
+          if (err.error.message) {
+            this.errorMsg.push(err.error.message);
+          } else if (err.error.validationErrors) {
+            this.errorMsg = err.error.validationErrors;
+          } else {
+            this.errorMsg.push('An unknown error occurred.');
+          }
+        }
+      });
   }
 
   login() {
     this.router.navigate(['login']);
   }
-
-
 }
+

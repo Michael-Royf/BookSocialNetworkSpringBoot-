@@ -27,4 +27,4 @@ export function approveReturnBorrowBook(http: HttpClient, rootUrl: string, param
   );
 }
 
-approveReturnBorrowBook.PATH = '/api/v1/api/v1/books/borrow/return/approve/{book-id}';
+approveReturnBorrowBook.PATH = '/api/v1/books/borrow/return/approve/{book-id}';

@@ -3,9 +3,10 @@
 import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
-import {AuthenticationService, BookService, FeedBackService} from "./services";
 
-
+import { FeedBackService } from './services/feed-back.service';
+import { BookService } from './services/book.service';
+import { AuthenticationService } from './services/authentication.service';
 
 /**
  * Module that provides all services and configuration.
@@ -34,7 +35,7 @@ export class ApiModule {
     }
   }
 
-  constructor(
+  constructor( 
     @Optional() @SkipSelf() parentModule: ApiModule,
     @Optional() http: HttpClient
   ) {

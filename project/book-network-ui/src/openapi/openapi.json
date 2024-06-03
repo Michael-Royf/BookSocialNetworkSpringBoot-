@@ -29,7 +29,7 @@
     }
   ],
   "paths": {
-    "/api/v1/api/v1/feedbacks": {
+    "/api/v1/feedbacks": {
       "post": {
         "tags": [
           "FeedBack"
@@ -60,7 +60,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books": {
+    "/api/v1/books": {
       "get": {
         "tags": [
           "Book"
@@ -131,7 +131,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/cover/{book-id}": {
+    "/api/v1/books/cover/{book-id}": {
       "post": {
         "tags": [
           "Book"
@@ -180,7 +180,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/borrow/{book-id}": {
+    "/api/v1/books/borrow/{book-id}": {
       "post": {
         "tags": [
           "Book"
@@ -212,7 +212,7 @@
         }
       }
     },
-    "/api/v1/api/v1/auth/register": {
+    "/api/v1/auth/register": {
       "post": {
         "tags": [
           "Authentication"
@@ -242,7 +242,7 @@
         }
       }
     },
-    "/api/v1/api/v1/auth/authenticate": {
+    "/api/v1/auth/authenticate": {
       "post": {
         "tags": [
           "Authentication"
@@ -272,7 +272,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/shareable/{book-id}": {
+    "/api/v1/books/shareable/{book-id}": {
       "patch": {
         "tags": [
           "Book"
@@ -304,7 +304,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/borrow/return/{book-id}": {
+    "/api/v1/books/borrow/return/{book-id}": {
       "patch": {
         "tags": [
           "Book"
@@ -336,7 +336,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/borrow/return/approve/{book-id}": {
+    "/api/v1/books/borrow/return/approve/{book-id}": {
       "patch": {
         "tags": [
           "Book"
@@ -368,7 +368,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/archived/{book-id}": {
+    "/api/v1/books/archived/{book-id}": {
       "patch": {
         "tags": [
           "Book"
@@ -400,7 +400,7 @@
         }
       }
     },
-    "/api/v1/api/v1/feedbacks/book/{book-id}": {
+    "/api/v1/feedbacks/book/{book-id}": {
       "get": {
         "tags": [
           "FeedBack"
@@ -451,7 +451,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/{book_id}": {
+    "/api/v1/books/{book_id}": {
       "get": {
         "tags": [
           "Book"
@@ -482,7 +482,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/returned": {
+    "/api/v1/books/returned": {
       "get": {
         "tags": [
           "Book"
@@ -524,7 +524,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/owner": {
+    "/api/v1/books/owner": {
       "get": {
         "tags": [
           "Book"
@@ -566,7 +566,7 @@
         }
       }
     },
-    "/api/v1/api/v1/books/borrowed": {
+    "/api/v1/books/borrowed": {
       "get": {
         "tags": [
           "Book"
@@ -608,7 +608,7 @@
         }
       }
     },
-    "/api/v1/api/v1/auth/activate-account": {
+    "/api/v1/auth/activate-account": {
       "get": {
         "tags": [
           "Authentication"
@@ -670,15 +670,21 @@
             "format": "int64"
           },
           "title": {
+            "maxLength": 100,
+            "minLength": 1,
             "type": "string"
           },
           "authorName": {
+            "maxLength": 50,
+            "minLength": 1,
             "type": "string"
           },
           "isbn": {
             "type": "string"
           },
           "synopsis": {
+            "maxLength": 2000,
+            "minLength": 10,
             "type": "string"
           },
           "shareable": {
@@ -688,17 +694,28 @@
       },
       "RegistrationRequest": {
         "required": [
+          "confirmationPassword",
           "email",
           "firstName",
           "lastName",
-          "password"
+          "password",
+          "username"
         ],
         "type": "object",
         "properties": {
+          "username": {
+            "maxLength": 20,
+            "minLength": 3,
+            "type": "string"
+          },
           "firstName": {
+            "maxLength": 50,
+            "minLength": 1,
             "type": "string"
           },
           "lastName": {
+            "maxLength": 50,
+            "minLength": 1,
             "type": "string"
           },
           "email": {
@@ -706,17 +723,20 @@
           },
           "password": {
             "type": "string"
+          },
+          "confirmationPassword": {
+            "type": "string"
           }
         }
       },
       "AuthenticationRequest": {
         "required": [
-          "email",
-          "password"
+          "password",
+          "usernameOrEmail"
         ],
         "type": "object",
         "properties": {
-          "email": {
+          "usernameOrEmail": {
             "type": "string"
           },
           "password": {

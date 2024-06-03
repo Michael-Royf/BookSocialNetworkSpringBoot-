@@ -221,8 +221,8 @@ public class BookServiceImpl implements BookService {
         if (book.isArchived() || !book.isShareable()) {
             throw new OperationNotPermittedException("The requested book cannot be borrowed since it is archived or not shareable");
         }
-        if (Objects.equals(book.getOwner().getId(), user.getId())) {
-            throw new OperationNotPermittedException("You cannot borrow or return  your own book");
+        if (!Objects.equals(book.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot return a book that you do not own");
         }
         BookTransactionHistory bookTransactionHistory =
                 transactionHistoryRepository.findByBookIdAndOwnerId(bookId, user.getId())
